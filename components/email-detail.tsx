@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import ReactMarkdown from "react-markdown"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { ArrowLeft, AlertTriangle, CheckCircle, Flag, Trash, Loader2 } from "lucide-react"
@@ -96,7 +97,7 @@ export function EmailDetail({ email, onBack }: EmailDetailProps) {
               <div className="text-sm">
                 From: <span className="font-medium">{displayEmail.from}</span>
               </div>
-              {displayEmail.isPhishing ? (
+              {displayEmail.isPhishing ? ( 
                 <div className="flex items-center gap-1 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
                   <AlertTriangle className="h-3 w-3" />
                   <span>Phishing Detected ({displayEmail.confidence}% confidence)</span>
@@ -114,26 +115,41 @@ export function EmailDetail({ email, onBack }: EmailDetailProps) {
             <div className="p-2 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-700">{error}</div>
           )}
 
+        {displayEmail.isPhishing && displayEmail.reasons && displayEmail.reasons.length > 0 && (
+          <CardFooter className="bg-red-50 border-t">
+            <div className="space-y-2 w-full">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <span className="font-medium text-red-600">Why we think this is a phishing email:</span>
+              </div>
+              <ul className="text-sm space-y-1 text-red-600 pl-7 list-disc">
+                {displayEmail.reasons.map((reason, index) => (
+                  <li key={index}>{reason}</li>
+                ))}
+              </ul>
+            </div>
+          </CardFooter>
+        )}
+
           <div className="border-t pt-4">
-            <div className="whitespace-pre-line text-sm">{bodyContent}</div>
+          <ReactMarkdown
+            remarkPlugins={[]}
+            components={{
+              a: ({ node, ...props }) => (
+                <a {...props} className="text-blue-600 underline max-w-full text-xs" target="_blank" rel="noopener noreferrer" />
+              ),
+              img: ({ node, ...props }) => (
+                <img {...props} className="my-4 max-w-full rounded-md" />
+              ),
+              p: ({ node, ...props }) => <p className="prose prose-sm max-w-full text-xs" {...props} />,
+            }}
+          >
+            {bodyContent}
+          </ReactMarkdown>
           </div>
         </div>
       </CardContent>
-      {displayEmail.isPhishing && displayEmail.reasons && displayEmail.reasons.length > 0 && (
-        <CardFooter className="bg-red-50 border-t">
-          <div className="space-y-2 w-full">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <span className="font-medium text-red-600">Why we think this is a phishing email:</span>
-            </div>
-            <ul className="text-sm space-y-1 text-red-600 pl-7 list-disc">
-              {displayEmail.reasons.map((reason, index) => (
-                <li key={index}>{reason}</li>
-              ))}
-            </ul>
-          </div>
-        </CardFooter>
-      )}
+      
     </Card>
   )
 }
