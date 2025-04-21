@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'PhishGuard App',
+  description: 'PhishGuard uses advanced decision tree algorithms to detect and protect you from phishing emails. Connect your Gmail account and stay safe online.',
   generator: 'v0.dev',
 }
 
